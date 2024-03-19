@@ -1,97 +1,134 @@
 buildscript {
-  repositories {
-    maven { url = "http://files.minecraftforge.net/maven" }
-    maven { url = "https://plugins.gradle.org/m2/" }
-  }
-  dependencies {
-    classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
-    classpath "com.wynprice.cursemaven:CurseMaven:2.1.1"
-  }
+    repositories {
+        mavenCentral()
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = "https://www.cursemaven.com" }
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+    }
 }
-
-apply plugin: "net.minecraftforge.gradle.forge"
-//apply plugin: "net.minecraftforge.grade"
-apply plugin: "com.wynprice.cursemaven"
+apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
 def mod_file = getModFile("net.gegy1000.terrarium.Terrarium")
 version = getModField("VERSION", mod_file)
-group = "net.gegy1000"
-archivesBaseName = "terrarium"
-sourceCompatibility = targetCompatibility = "1.8"
+group = 'net.gegy1000'
+archivesBaseName = 'terrarium'
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-  version = "1.13.2-25.0.223"
-  runDir = "minecraft"
-  mappings =  "stable_47"
-}
 
+    mappings channel: 'snapshot', version: '20180921-1.13'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
 repositories {
-  mavenCentral()
-  maven { url = "https://oss.sonatype.org/content/repositories/public/" }
-  maven { url = "https://repo.spongepowered.org/maven/" }
-  maven { url = "https://maven.gegy.dev" }
-  maven { url = "https://www.cursemaven.com" }
-  maven { url = "http://mvn.topobyte.de" }
+    mavenCentral()
+    maven { url = 'https://maven.minecraftforge.net/' }
+    maven { url = "https://oss.sonatype.org/content/repositories/public/" }
+    maven { url = "https://repo.spongepowered.org/maven/" }
+    maven { url = "https://maven.gegy.dev" }
+    maven { url = "https://www.cursemaven.com" }
+    maven { url = "http://mvn.topobyte.de" }
 }
-
-configurations {
-  embed
-  compile.extendsFrom(embed)
-}
-
 dependencies {
-  // optional dependencies
-  //deobfCompile 'io.github.opencubicchunks:cubicchunks-api:1.12.2-0.0-SNAPSHOT'
-  //deobfCompile 'io.github.opencubicchunks:cubicchunks:1.12.2-0.0-SNAPSHOT'
+    minecraft 'net.minecraftforge:forge:1.13.2-25.0.223'
 
-  deobfCompile 'com.github.glitchfiend.biomesoplenty:BiomesOPlenty:1.12.2-7.0.1.2399:universal'
-  deobfCompile 'curse.maven:dynamictrees-252818:2822231'
+    fg.deobf 'io.github.opencubicchunks:cubicchunks-api:1.12.2-0.0-SNAPSHOT' //deprecated
+    fg.deobf 'io.github.opencubicchunks:cubicchunks:1.12.2-0.0-SNAPSHOT' //deprecated
 
-  // embedded dependencies
-  embed 'dev.gegy:gengen:0.1.0-SNAPSHOT'
-  embed 'net.gegy1000:just-now:0.1.0-SNAPSHOT'
-  embed 'com.vividsolutions:jts:1.13'
-  embed 'org.tukaani:xz-fork:1.8'
+    fg.deobf 'com.github.glitchfiend.biomesoplenty:BiomesOPlenty:1.12.2-7.0.1.2399:universal' //deprecated for 1.13
+    fg.deobf 'curse.maven:dynamictrees-252818:2822231' //deprecated for 1.13
+
+    // embedded dependencies
+    implementation 'dev.gegy:gengen:0.1.0-SNAPSHOT'
+    implementation 'net.gegy1000:just-now:0.1.0-SNAPSHOT'
+    implementation 'com.vividsolutions:jts:1.13'
+    implementation group: 'org.tukaani', name: 'xz-fork', version: '1.8'
+
 }
 
+// Example for how to get properties into the manifest for reading by the runtime..
 jar {
-  from configurations.embed.collect {
-    it.isDirectory() ? it : zipTree(it)
-  }
-  manifest {
-    attributes "FMLAT": "terrarium_at.cfg"
-    attributes "Maven-Artifact": "${project.group}:${project.archivesBaseName}:${project.version}"
-    attributes "Timestamp": System.currentTimeMillis()
-  }
+    manifest {
+        attributes([
+                "Specification-Title": getModField("ID", mod_file),
+                "Specification-Vendor": "OpalSoPL",
+                "Specification-Version": getModField("VERSION", mod_file), // We are version 1 of ourselves
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" :"OpalSoPL, ",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
 }
 
-processResources {
-  inputs.property "version", project.version
-  inputs.property "mcversion", project.minecraft.version
-
-  from(sourceSets.main.resources.srcDirs) {
-    include "mcmod.info"
-    expand "version": project.version, "mcversion": project.minecraft.version
-  }
-
-  from(sourceSets.main.resources.srcDirs) {
-    exclude "mcmod.info"
-  }
+def reobfFile = file("$buildDir/reobfJar/output.jar")
+def reobfArtifact = artifacts.add('default', reobfFile) {
+    type 'jar'
+    builtBy 'reobfJar'
 }
-
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact reobfArtifact
+        }
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
 File getModFile(String fq_name) {
-  return file("src/main/java/${fq_name.replace('.', '/')}.java")
+    return file("src/main/java/${fq_name.replace('.', '/')}.java")
 }
 
 String getModField(String type, File mod_file) {
-  String field = ""
-  String prefix = "public static final String $type = \""
-  mod_file.eachLine { String s ->
-    s = s.trim()
-    if (s.startsWith(prefix)) {
-      s = s.substring(prefix.length(), s.length() - 2)
-      field = s
+    String field = ""
+    String prefix = "public static final String $type = \""
+    mod_file.eachLine { String s ->
+        s = s.trim()
+        if (s.startsWith(prefix)) {
+            s = s.substring(prefix.length(), s.length() - 2)
+            field = s
+        }
     }
-  }
-  return field
+    return field
 }
