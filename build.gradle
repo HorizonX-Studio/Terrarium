@@ -10,6 +10,7 @@ buildscript {
 }
 
 apply plugin: "net.minecraftforge.gradle.forge"
+//apply plugin: "net.minecraftforge.grade"
 apply plugin: "com.wynprice.cursemaven"
 
 def mod_file = getModFile("net.gegy1000.terrarium.Terrarium")
@@ -19,9 +20,9 @@ archivesBaseName = "terrarium"
 sourceCompatibility = targetCompatibility = "1.8"
 
 minecraft {
-  version = "1.12.2-14.23.5.2847"
+  version = "1.13.2-25.0.223"
   runDir = "minecraft"
-  mappings = "stable_39"
+  mappings =  "stable_47"
 }
 
 repositories {
@@ -40,8 +41,8 @@ configurations {
 
 dependencies {
   // optional dependencies
-  deobfCompile 'io.github.opencubicchunks:cubicchunks-api:1.12.2-0.0-SNAPSHOT'
-  deobfCompile 'io.github.opencubicchunks:cubicchunks:1.12.2-0.0-SNAPSHOT'
+  //deobfCompile 'io.github.opencubicchunks:cubicchunks-api:1.12.2-0.0-SNAPSHOT'
+  //deobfCompile 'io.github.opencubicchunks:cubicchunks:1.12.2-0.0-SNAPSHOT'
 
   deobfCompile 'com.github.glitchfiend.biomesoplenty:BiomesOPlenty:1.12.2-7.0.1.2399:universal'
   deobfCompile 'curse.maven:dynamictrees-252818:2822231'

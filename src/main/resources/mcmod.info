@@ -2,27 +2,29 @@
   {
     "modid": "terrarium",
     "name": "Terrarium",
-    "description": "Data-based world generation library",
+    "description": "Data-based world generation library. Port of original mod to 1.13",
     "version": "${version}",
-    "url": "https://github.com/gegy1000/Terrarium/",
+    "url": "https://github.com/HorizonX-Studio/Terrarium",
     "logoFile": "assets/terrarium/banner.png",
     "authorList": [
       "gegy1000"
+      "OpalSoPL"
     ],
     "dependencies": [],
-    "credits": "pau101"
+    "credits": "pau101, gegy1000"
   },
   {
     "modid": "earth",
     "name": "Terrarium: Earth",
-    "description": "Generation of the Earth in a new customizable world type",
+    "description": "Generation of the Earth in a new customizable world type. Port of original mod to 1.13",
     "version": "${version}",
-    "url": "https://github.com/gegy1000/Terrarium/",
+    "url": "https://github.com/HorizonX-Studio/Terrarium",
     "logoFile": "assets/terrarium/banner.png",
     "authorList": [
       "gegy1000"
+      "OpalSoPL"
     ],
     "dependencies": [],
-    "credits": "pau101, ChunkMapper (whamtet), NASA, ESA, OpenStreetMap Contributors (C)"
+    "credits": "gegy1000, pau101, ChunkMapper (whamtet), NASA, ESA, OpenStreetMap Contributors (C)"
   }
 ]
